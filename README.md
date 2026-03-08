@@ -1,45 +1,45 @@
 # Universal Video Downloader
 
-YouTube, Vimeo, Twitter/X, TikTok ve 1000+ platformdan video/ses indiren komut satiri araci.
+A command-line tool to download videos and audio from YouTube, Vimeo, Twitter/X, TikTok, and 1000+ platforms.
 
-## Kurulum
+## Installation
 
 ```bash
 pip install -r requirements.txt
 ```
 
-> **Not:** Ses donusturme icin sisteminizde `ffmpeg` kurulu olmasi gerekir.
+> **Note:** `ffmpeg` must be installed on your system for audio conversion (MP3) and video stream merging.
 
-## Kullanim
+## Usage
 
 ```bash
-# En iyi kalitede indir
-python app.py <URL>
+# Download at best available quality
+python3 app.py <URL>
 
-# 720p indir, belirli klasore
-python app.py <URL> --quality 720p --output ./videolar
+# Download at 720p to a specific folder
+python3 app.py <URL> --quality 720p --output ./videos
 
-# Sadece ses (MP3) indir
-python app.py <URL> --audio
+# Download audio only (MP3)
+python3 app.py <URL> --audio
 
-# Bilgi goster, indirme
-python app.py <URL> --info
+# Show info without downloading
+python3 app.py <URL> --info
 ```
 
-## Secenekler
+## Options
 
-| Secenek | Kisayol | Varsayilan | Aciklama |
-|---------|---------|------------|----------|
-| `--output` | `-o` | `downloads` | Cikti klasoru |
-| `--quality` | `-q` | `best` | `best`, `1080p`, `720p`, `480p`, `audio` |
-| `--audio` | `-a` | `False` | Sadece MP3 indir |
-| `--info` | `-i` | `False` | Sadece bilgi goster |
+| Option | Shorthand | Default | Description |
+|--------|-----------|---------|-------------|
+| `--output` | `-o` | `downloads` | Output directory |
+| `--quality` | `-q` | `best` | Quality: `best`, `1080p`, `720p`, `480p` |
+| `--audio` | `-a` | `False` | Download audio only (MP3) |
+| `--info` | `-i` | `False` | Show video info without downloading |
 
-## Dosya Yapisi
+## File Structure
 
 ```
 .
-├── app.py          # CLI arayuzu (Typer + Rich)
-├── logic.py        # Cekirdek indirme mantigi (yt-dlp)
+├── app.py           # CLI interface (Typer + Rich)
+├── logic.py         # Core download logic (yt-dlp)
 └── requirements.txt
 ```
