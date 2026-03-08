@@ -35,24 +35,11 @@ python3 app.py <URL> --info
 | `--audio` | `-a` | `False` | Download audio only (MP3) |
 | `--info` | `-i` | `False` | Show video info without downloading |
 
-## Web Interface (Mobile & Desktop)
-
-Start the web server:
-
-```bash
-uvicorn server:app --host 0.0.0.0 --port 8000
-```
-
-Then open `http://localhost:8000` in any browser — works on mobile too if both devices are on the same network.
-
 ## File Structure
 
 ```
 .
 ├── app.py           # CLI interface (Typer + Rich)
-├── server.py        # Web server (FastAPI)
 ├── logic.py         # Core download logic (yt-dlp)
-├── static/
-│   └── index.html   # Web UI
 └── requirements.txt
 ```
