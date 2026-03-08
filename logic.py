@@ -81,6 +81,7 @@ def download(
     opts = build_ydl_opts(output_dir, quality, audio_only)
 
     downloaded_files = []
+    final_files = []
 
     def _default_hook(d):
         if d["status"] == "finished":
@@ -88,17 +89,22 @@ def download(
         if progress_hook:
             progress_hook(d)
 
+    def _postprocessor_hook(d):
+        if d["status"] == "finished":
+            filepath = d.get("info_dict", {}).get("filepath")
+            if filepath:
+                final_files.append(filepath)
+
     opts["progress_hooks"] = [_default_hook]
+    opts["postprocessor_hooks"] = [_postprocessor_hook]
 
     with yt_dlp.YoutubeDL(opts) as ydl:
         ydl.download([url])
 
-    # yt-dlp may rename files after postprocessing; scan output dir for result
-    if not downloaded_files:
-        out_path = Path(output_dir)
-        downloaded_files = [str(f) for f in out_path.iterdir() if f.is_file()]
-
-    return downloaded_files
+    # Merge lists, deduplicate, and filter out temp files deleted by postprocessing
+    candidates = list(dict.fromkeys(final_files + downloaded_files))
+    existing = [f for f in candidates if Path(f).exists()]
+    return existing if existing else candidates
 
 
 def format_duration(seconds: int | None) -> str:
