@@ -60,7 +60,13 @@ def download(
         return
 
     # --- Indirme ---
-    mode = "MP3" if audio_only else f"video ({quality})"
+    if audio_only:
+        if logic._ffmpeg_available():
+            mode = "ses (MP3)"
+        else:
+            mode = "ses (ham format — MP3 icin ffmpeg kurun)"
+    else:
+        mode = f"video ({quality})"
     console.print(f"\n[bold green]Indiriliyor[/bold green] → [dim]{output}/[/dim]  [italic]{mode}[/italic]\n")
 
     with Progress(
