@@ -50,6 +50,7 @@ def build_ydl_opts(output_dir: str, quality: str, audio_only: bool) -> dict:
     return {
         "format": fmt,
         "outtmpl": str(out_path / "%(title)s.%(ext)s"),
+        "merge_output_format": "mp4",
         "noplaylist": False,
         "quiet": True,
         "no_warnings": True,
