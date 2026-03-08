@@ -1,13 +1,27 @@
 import yt_dlp
-import os
+import shutil
 from pathlib import Path
 
 
-QUALITY_FORMATS = {
+def _ffmpeg_available() -> bool:
+    return shutil.which("ffmpeg") is not None
+
+
+# Formats that require ffmpeg (merging video+audio streams)
+QUALITY_FORMATS_FFMPEG = {
     "best": "bestvideo+bestaudio/best",
     "1080p": "bestvideo[height<=1080]+bestaudio/best[height<=1080]",
     "720p": "bestvideo[height<=720]+bestaudio/best[height<=720]",
     "480p": "bestvideo[height<=480]+bestaudio/best[height<=480]",
+    "audio": "bestaudio/best",
+}
+
+# Fallback formats for when ffmpeg is not available (single-file streams)
+QUALITY_FORMATS_NOFFMPEG = {
+    "best": "best",
+    "1080p": "best[height<=1080]",
+    "720p": "best[height<=720]",
+    "480p": "best[height<=480]",
     "audio": "bestaudio/best",
 }
 
@@ -16,10 +30,17 @@ def build_ydl_opts(output_dir: str, quality: str, audio_only: bool) -> dict:
     out_path = Path(output_dir)
     out_path.mkdir(parents=True, exist_ok=True)
 
-    fmt = "bestaudio/best" if audio_only else QUALITY_FORMATS.get(quality, QUALITY_FORMATS["best"])
+    ffmpeg = _ffmpeg_available()
+
+    if audio_only:
+        fmt = "bestaudio/best"
+    elif ffmpeg:
+        fmt = QUALITY_FORMATS_FFMPEG.get(quality, QUALITY_FORMATS_FFMPEG["best"])
+    else:
+        fmt = QUALITY_FORMATS_NOFFMPEG.get(quality, QUALITY_FORMATS_NOFFMPEG["best"])
 
     postprocessors = []
-    if audio_only:
+    if audio_only and ffmpeg:
         postprocessors.append({
             "key": "FFmpegExtractAudio",
             "preferredcodec": "mp3",
